@@ -1,43 +1,40 @@
 /**
  * Template engine.
- * 
- * A template language that can generate HTML markup with JS.
+ * Handlebars-based template compiler with built-in helpers
+ * for math, comparison operators, and Moment.js date formatting.
  */
 import Handlebars from 'handlebars';
 import moment from 'moment';
 
-/**
- * Embedded JavaScript templates
- */
 export default class Template {
 
   private static _compiler: typeof Handlebars|undefined = undefined;
 
   /**
-   * Returns a reusable template
-   * 
-   * @param {string} source
+   * Compile a Handlebars template string and return a reusable render function.
+   *
+   * @param  {string} source Handlebars template source.
+   * @return {HandlebarsTemplateDelegate<any>} Compiled template function.
    */
   public static compile(source: string): HandlebarsTemplateDelegate<any> {
     return Template.compiler.compile<any>(source);
-    // return Handlebars.create().compile<any>(source);
   }
 
   /**
+   * Return the Handlebars instance with all custom helpers registered.
+   * Lazily initialized on first access.
    *
-   * Return Handlebars class containing helper functions
-   * 
-   * @return {Handlebars}
+   * @return {typeof Handlebars} Configured Handlebars instance.
    */
   private static get compiler(): typeof Handlebars {
     if (!Template._compiler) {
 
       /**
-       * Shift operation
-       * 
-       * @param {number}  number
-       * @param {number}  precision
-       * @param {boolean} reverseShift
+       * Shift a number's decimal point for precise rounding.
+       *
+       * @param {number}  number       The value to shift.
+       * @param {number}  precision    Number of decimal places.
+       * @param {boolean} reverseShift If `true`, shift in the opposite direction.
        */
       function shift(number: number, precision: number, reverseShift: boolean): number {
         if (reverseShift) precision = -precision;
@@ -45,7 +42,7 @@ export default class Template {
         return +(numArray[0] + 'e' + (numArray[1] ? (+numArray[1] + precision) : precision));
       }
 
-      // Get the `Math.ceil()` of the given value.
+      // Math helper: ceil with optional decimal precision
       Handlebars.registerHelper('ceil', (...args: any[]) => {
         let number: number;
         let precision: number = 0;
@@ -55,7 +52,7 @@ export default class Template {
         return shift(Math.ceil(shift(number, precision, false)), precision, true);
       });
 
-      // Get the `Math.floor()` of the given value.
+      // Math helper: floor with optional decimal precision
       Handlebars.registerHelper('floor', (...args: any[]) => {
         let number: number;
         let precision: number = 0;
@@ -65,7 +62,7 @@ export default class Template {
         return shift(Math.floor(shift(number, precision, false)), precision, true);
       });
 
-      // Round the given number.
+      // Math helper: round with optional decimal precision
       Handlebars.registerHelper('round', (...args: any[]) => {
         let number: number;
         let precision: number = 0;
@@ -75,37 +72,40 @@ export default class Template {
         return shift(Math.round(shift(number, precision, false)), precision, true);
       });
 
-      // Equal to
+      // Comparison: equal (==)
       Handlebars.registerHelper('eq', (value1: any, value2: any): boolean => value1 == value2);
 
-      // Not equal to
+      // Comparison: not equal (!=)
       Handlebars.registerHelper('ne', (value1: any, value2: any): boolean => value1 != value2);
 
-      // Less than
+      // Comparison: less than (<)
       Handlebars.registerHelper('lt', (value1: any, value2: any): boolean => value1 < value2);
 
-      // Greater than
+      // Comparison: greater than (>)
       Handlebars.registerHelper('gt', (value1: any, value2: any): boolean => value1 > value2);
 
-      // Less than or equal to
+      // Comparison: less than or equal (<=)
       Handlebars.registerHelper('le', (value1: any, value2: any): boolean => value1 <= value2);
 
-      // Greater than or equal to
+      // Comparison: greater than or equal (>=)
       Handlebars.registerHelper('ge', (value1: any, value2: any): boolean => value1 >= value2);
 
-      // And operator
+      // Logical: AND — all arguments must be truthy
       Handlebars.registerHelper('and', (...args: any): boolean => Array.prototype.slice.call(args).every(Boolean));
 
-      // Or operator
+      // Logical: OR — at least one argument must be truthy
       Handlebars.registerHelper('or', (...args: any): boolean => Array.prototype.slice.call(args, 0, -1).some(Boolean));
 
-      // Date utility moment
+      // Moment.js date helper for formatting, manipulation, and queries
       Handlebars.registerHelper('moment', (...args: any): any => {
+        /** Convert numeric strings and unix timestamps to a date value. */
         function marshallDate(date: any, unix: any) {
           if (typeof date === 'string' && date.match(/^\d+(\.\d+){0,1}$/)) date = +date;
           if (unix && typeof date === 'number') date = date * 1000;
           return date;
         }
+
+        /** Apply add/subtract manipulation to a moment object. */
         function manipulateMoment(momentObj: any, method: string): void {
           const arg = params[method];
           if (arg) {
@@ -121,8 +121,13 @@ export default class Template {
             momentObj[method](args);
           }
         }
+
+        // Mapping of shorthand format names to moment method names
         const FORMAT: { [key: string]: string } = { dates: 'date', months: 'month', years: 'year', isoweekday: 'isoWeekday', dayofyear: 'dayOfYear', isoweek: 'isoWeek', isoweeks: 'isoWeek', weekyear: 'weekYear', isoweekyear: 'isoWeekYear', zoneabbr: 'zoneAbbr', zonename: 'zoneName', tostring: 'toString', string: 'toString', str: 'toString', valueof: 'valueOf', value: 'valueOf', val: 'valueOf', fromnow: 'fromNow', daysinmonth: 'daysInMonth', todate: 'toDate', toarray: 'toArray', array: 'toArray', tojson: 'toJSON', json: 'toJSON', toisostring: 'toISOString', isostring: 'toISOString' };
+
+        // Weekday display format mapping
         const WEEKDAY: { [key: string]: string } = { L: 'dddd', S: 'ddd', XS: 'dd' };
+
         const options = args.pop();
         let date = args.shift();
         let format = args.shift();
@@ -144,7 +149,7 @@ export default class Template {
           params.type = params.type ? params.type.toUpperCase() : null;
           if (params.type !== 'NUMBER') {
             if (WEEKDAY[params.type]) format = WEEKDAY[params.type];
-            else　format = WEEKDAY.L;
+            else format = WEEKDAY.L;
           }
         }
         let ofMethod = 'start';

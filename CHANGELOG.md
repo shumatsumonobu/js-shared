@@ -1,56 +1,69 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+The format is based on [Keep a Changelog](https://keepachangelog.com/).
+
+## [1.0.5] - 2026-03-06
+
+### Changed
+
+- Improve README with features table, usage examples, and organized API reference
+- Improve JSDoc across all modules for better IDE autocompletion and documentation
+
 ## [1.0.4] - 2020-12-21
 
-- Added a module to operate the clipboard.
+### Added
 
-    ```js
-    import { Clipboard } from 'js-shared';
+- **Clipboard** module — async clipboard write support
 
-    // Save the string to the clipboard.
-    await Clipboard.save('Hello, World!');
-    ````
+```js
+import { Clipboard } from 'js-shared';
+
+await Clipboard.save('Hello, World!');
+```
 
 ## [1.0.3] - 2020-09-04
 
-- Add fill option to rectangle drawing method of Graphics module
+### Added
 
-    ![system-color.png](https://raw.githubusercontent.com/takuya-motoshima/js-shared/master/screencap/draw-rectangle.png)
+- `fill` option for `Graphics.drawRectangle` — solid fills with optional rotation
 
-    ```js
-    // <canvas id="myCanvas" width=300 height=200 style="border: 1px solid #d3d3d3;"></canvas>
+![draw-rectangle.png](screenshots/draw-rectangle.png)
 
-    import { Graphics } from 'js-shared';
+```js
+import { Graphics } from 'js-shared';
 
-    const canvas = document.querySelector('#myCanvas');
+const canvas = document.querySelector('#myCanvas');
 
-    const x = 50;
-    const y = 80;
-    const width = 100;
-    const height 20;
+// Stroke only
+Graphics.drawRectangle(canvas, 50, 80, 100, 20, {
+  lineColor: 'blue',
+});
 
-    // Draw only rectangular lines。
-    Graphics.drawRectangle(canvas, x, y, width, height, {
-      lineColor: 'blue'
-    });
-
-    // Fill the rectangle.
-    Graphics.drawRectangle(canvas, x, y, width, height, {
-      fill: 'gold',
-      degree: 45,
-      lineWidth: 0
-    });
-    ```
+// Filled & rotated
+Graphics.drawRectangle(canvas, 50, 80, 100, 20, {
+  fill: 'gold',
+  degree: 45,
+  lineWidth: 0,
+});
+```
 
 ## [1.0.2] - 2020-07-20
 
-- Added cookie utility.
+### Added
+
+- **Cookie** module — simple get / set / remove for browser cookies
 
 ## [1.0.1] - 2020-07-20
 
-- Added CHANGELOG.md.
-- Fixed README typo.
+### Fixed
+
+- README typos
+
+### Added
+
+- This changelog
 
 ## [1.0.0] - 2020-07-20
 
-Released.
+Initial release.

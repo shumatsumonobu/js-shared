@@ -1,12 +1,13 @@
 /**
  * Collection utility.
+ * Array helper methods for common operations.
  */
 export default class {
     /**
-     * Remove duplicates from an array
+     * Remove duplicate values from an array.
      *
-     * @param  {any[]} items
-     * @return {any}
+     * @param  {any[]} items The array to deduplicate.
+     * @return {any[]}       A new array with duplicates removed (first occurrence kept).
      */
     static unique(items: any[]): any;
 }
