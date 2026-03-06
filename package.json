@@ -1,23 +1,21 @@
 {
   "name": "js-shared",
-  "version": "1.0.3",
-  "description": "This is a general utility class and function package.",
+  "version": "1.0.5",
+  "description": "Lightweight JS/TS utility toolkit — browser detection, date formatting, template engine, and more",
   "main": "dist/build.common.js",
   "module": "dist/build.esm.js",
   "browser": "dist/build.js",
   "types": "types/index.d.ts",
   "scripts": {
     "watch": "rollup -c --watch",
-    "prewatch": "rm -rf dist types && json2module package.json > src/package.ts",
+    "prewatch": "rm -rf dist types",
     "build": "rollup -c",
-    "prebuild": "rm -rf dist types && json2module package.json > src/package.ts",
-    "test": "jest",
-    "start": "ts-node -r tsconfig-paths/register -P tsconfig.json -O '{\"module\":\"commonjs\"}' -e \"import * as index from '~/index';console.log(index);\"",
-    "prestart": "json2module package.json > src/package.ts"
+    "prebuild": "rm -rf dist types",
+    "start": "ts-node -r tsconfig-paths/register -P tsconfig.json -O '{\"module\":\"commonjs\"}' -e \"import * as index from '~/index';console.log(index);\""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/takuya-motoshima/js-shared.git"
+    "url": "git+https://github.com/shumatsumonobu/js-shared.git"
   },
   "files": [
     "dist/*.js",
@@ -25,46 +23,43 @@
     "package.json",
     "README.md",
     "CHANGELOG.md",
-    "examples",
-    "screencap"
+    "screenshots"
   ],
   "keywords": [
-    "browser",
-    "javascript",
-    "js",
-    "library",
-    "lib",
-    "module",
+    "utility",
     "typescript",
-    "ts",
-    "esm",
-    "es6"
+    "browser-detection",
+    "date",
+    "template",
+    "handlebars",
+    "color",
+    "random",
+    "cookie",
+    "clipboard",
+    "canvas",
+    "collection"
   ],
-  "author": "Takuya Motoshima <developer.takuyamotoshima@gmail.com> (https://twitter.com/TakuyaMotoshima)",
+  "author": "shumatsumonobu <shumatsumonobu@gmail.com> (https://x.com/shumatsumonobu)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/takuya-motoshima/js-shared/issues",
-    "email": "developer.takuyamotoshima@gmail.com"
+    "url": "https://github.com/shumatsumonobu/js-shared/issues",
+    "email": "shumatsumonobu@gmail.com"
   },
-  "homepage": "https://github.com/takuya-motoshima/js-shared#readme",
+  "homepage": "https://github.com/shumatsumonobu/js-shared#readme",
   "devDependencies": {
-    "@rollup/plugin-alias": "^3.0.1",
-    "@rollup/plugin-replace": "^2.3.1",
-    "@types/jest": "^24.0.23",
+    "@rollup/plugin-alias": "^5.0.0",
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-replace": "^5.0.0",
+    "@rollup/plugin-terser": "^0.4.0",
     "@types/js-cookie": "^2.2.6",
-    "fetch-mock": "^8.0.0",
-    "jest": "^24.9.0",
-    "json2module": "0.0.3",
-    "rollup": "^1.27.2",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-json": "^4.0.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^5.3.0",
-    "rollup-plugin-typescript2": "^0.25.2",
-    "ts-jest": "^24.1.0",
+    "@types/node": "^20.0.0",
+    "rollup": "^3.29.0",
+    "rollup-plugin-typescript2": "^0.36.0",
     "ts-node": "^8.5.2",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.7.2"
+    "typescript": "^5.0.0"
   },
   "dependencies": {
     "bowser": "^2.9.0",

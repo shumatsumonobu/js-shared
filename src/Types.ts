@@ -1,24 +1,23 @@
 /**
  * Type utility.
- * 
- * Utility for type determination and type related processing.
+ * Runtime type checking helpers.
  */
 export default class {
 
   /**
-   * Returns whether it is an Async function
-   * 
+   * Check whether a function is an `async` function.
+   *
    * @example
    * import { Types } from 'js-shared';
    *
+   * async function myAsyncFunction() {}
    * function myFunction() {}
-   * function async myAsyncFunction {}
    *
-   * Types.isAsync(myFunction);// false
-   * Types.isAsync(myAsyncFunction);// true
-   * 
-   * @param  {Function} value
-   * @return {boolean}
+   * Types.isAsync(myAsyncFunction); // => true
+   * Types.isAsync(myFunction);      // => false
+   *
+   * @param  {Function} value The function to check.
+   * @return {boolean}        `true` if the function is async.
    */
   public static isAsync(value: Function): boolean {
     return value && value.constructor && value.constructor === Object.getPrototypeOf(async function(){}).constructor

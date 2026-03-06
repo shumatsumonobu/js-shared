@@ -1,4 +1,3 @@
-import { version } from '~/package';
 import Misc from '~/Misc';
 import Graphics from '~/Graphics';
 import Types from '~/Types';
@@ -15,7 +14,6 @@ import Cookie from '~/Cookie';
 import Clipboard from '~/Clipboard';
 
 export {
-  version,
   Misc,
   Graphics,
   Types,

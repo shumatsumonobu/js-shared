@@ -1,11 +1,12 @@
 /**
- * Save the clipboard.
+ * Clipboard utility.
+ * Provides async read/write access to the system clipboard.
  */
 export default class {
     /**
-     * Copy the string to the clipboard.
+     * Write a string to the system clipboard.
      *
-     * @param  {string}        str
+     * @param  {string}        str The text to copy.
      * @return {Promise<void>}
      */
     static save(str: string): Promise<void>;

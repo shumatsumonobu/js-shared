@@ -1,5 +1,6 @@
 /**
- * Graphic utility.
+ * Graphics utility.
+ * Canvas drawing helpers for points, rectangles, media layout and coordinate math.
  */
 import ICoordinate from '~/interfaces/ICoordinate';
 import IRect from '~/interfaces/IRect';
@@ -9,10 +10,10 @@ import Color from '~/Color';
 export default class {
 
   /**
-   * Returns the intrinsic dimensions of the media element
+   * Return the intrinsic (natural) dimensions of a media element or ImageData.
    *
-   * @param  {HTMLImageElement|HTMLVideoElement|ImageData} media
-   * @return {{ width: number, height: number }}
+   * @param  {HTMLImageElement|HTMLVideoElement|ImageData} media Target media.
+   * @return {IDimensions} Intrinsic width and height.
    */
   public static getMediaDimensions(media: HTMLImageElement|HTMLVideoElement|ImageData): IDimensions {
     if (media instanceof HTMLImageElement) {
@@ -34,10 +35,10 @@ export default class {
   }
 
   /**
-   * Returns TRUE if the media element is loading a resource
-   * 
-   * @param  {HTMLImageElement|HTMLVideoElement} media
-   * @return {boolean}
+   * Check whether a media element has finished loading its resource.
+   *
+   * @param  {HTMLImageElement|HTMLVideoElement} media Target media element.
+   * @return {boolean} `true` if the resource is ready to use.
    */
   public static isMediaLoaded(media: HTMLImageElement|HTMLVideoElement): boolean {
     if (!(media instanceof HTMLImageElement) && !(media instanceof HTMLVideoElement)) throw new Error('Invalid argument element');
@@ -45,10 +46,10 @@ export default class {
   }
 
   /**
-   * Returns dimensions without borders and padding
+   * Return the inner dimensions of a media element (excluding padding).
    *
-   * @param  {HTMLImageElement|HTMLVideoElement} media
-   * @return {{ width: number, height: number }}
+   * @param  {HTMLImageElement|HTMLVideoElement} media Target media element.
+   * @return {IDimensions} Content-box width and height.
    */
   public static getInnerDimensions(media: HTMLImageElement|HTMLVideoElement): IDimensions {
     const style = getComputedStyle(media);
@@ -58,10 +59,10 @@ export default class {
   }
 
   /**
-   * Wait for media element resource to load
-   * 
-   * @param  {HTMLImageElement|HTMLVideoElement} media
-   * @return {Promise<Event>}
+   * Return a Promise that resolves when a media element finishes loading.
+   *
+   * @param  {HTMLImageElement|HTMLVideoElement} media Target media element.
+   * @return {Promise<Event>} Resolves with the load event, rejects on error.
    */
   public static awaitMediaLoaded(media: HTMLImageElement|HTMLVideoElement): Promise<Event> {
     return new Promise((resolve, reject) => {
@@ -77,14 +78,14 @@ export default class {
   }
 
   /**
-   * Returns the coordinates of the rotated rectangle
-   * 
-   * @param  {number} x
-   * @param  {number} y
-   * @param  {number} width
-   * @param  {number} height
-   * @param  {number} degree
-   * @return {ICoordinate[]}
+   * Calculate the four corner coordinates of a rectangle after rotation.
+   *
+   * @param  {number} x      Top-left X position.
+   * @param  {number} y      Top-left Y position.
+   * @param  {number} width  Rectangle width.
+   * @param  {number} height Rectangle height.
+   * @param  {number} degree Rotation angle in degrees (default: 0).
+   * @return {ICoordinate[]}  Corners in order: top-left, top-right, bottom-right, bottom-left.
    */
   public static getRotatedRectCoordinates(x: number, y: number, width: number, height: number, degree: number = 0): ICoordinate[] {
     let topLeft;
@@ -92,6 +93,7 @@ export default class {
     let bottomRight;
     let bottomLeft;
     if (degree !== 0) {
+      // Rotate around the rectangle's center
       const x2 = x + width / 2;
       const y2 = y + height / 2;
       topLeft = this.getRotationCoordinate(x, y, x2, y2, degree);
@@ -113,18 +115,18 @@ export default class {
   }
 
   /**
-   * Returns rotated coordinates
-   * 
-   * @param  {number} x1
-   * @param  {number} y2
-   * @param  {number} x2
-   * @param  {number} y2
-   * @param  {number} degree
-   * @return {ICoordinate} coordinate Coordinate after rotation
+   * Rotate a point (x1, y1) around a center (x2, y2) by the given angle.
+   *
+   * @param  {number} x1     Point X.
+   * @param  {number} y1     Point Y.
+   * @param  {number} x2     Center of rotation X.
+   * @param  {number} y2     Center of rotation Y.
+   * @param  {number} degree Rotation angle in degrees.
+   * @return {ICoordinate}   Rotated coordinate.
    */
   private static getRotationCoordinate(x1: number, y1: number, x2: number, y2: number, degree: number): ICoordinate {
     const radian = degree * (Math.PI / 180);
-    const sin = Math.sin(radian); 
+    const sin = Math.sin(radian);
     const cos = Math.cos(radian);
     return {
       x: cos * (x1 - x2) - sin * (y1 - y2) + x2,
@@ -133,10 +135,10 @@ export default class {
   }
 
   /**
-   * Returns the center coordinates
-   * 
-   * @param  {ICoordinate[]} coordinates
-   * @return {ICoordinate} coordinate Center coordinates
+   * Calculate the centroid (average) of multiple coordinates.
+   *
+   * @param  {...ICoordinate} coordinates One or more coordinate objects.
+   * @return {ICoordinate}                Center coordinate.
    */
   public static getCenterCoordinate(...coordinates: ICoordinate[]): ICoordinate {
     const coordinate = coordinates.reduce((coordinate, { x, y }) => {
@@ -150,42 +152,40 @@ export default class {
   }
 
   /**
-   * Returns the angle between two coordinates
-   * 
-   * @param  {number} x1
-   * @param  {number} y1
-   * @param  {number} x2
-   * @param  {number} y2
-   * @return {number}
+   * Calculate the angle (in degrees) between two points.
+   *
+   * @param  {number} x1 First point X.
+   * @param  {number} y1 First point Y.
+   * @param  {number} x2 Second point X.
+   * @param  {number} y2 Second point Y.
+   * @return {number}    Angle in degrees.
    */
   public static getAngleBetweenCoordinates(x1: number, y1: number, x2: number, y2: number): number {
     const radian = Math.atan2(y2 - y1, x2 - x1);
     const degree = radian * 180 / Math.PI;
-    // const radian = Math.atan2(x2 - x1, y2 - y1);
-    // let  degree = radian * 360 / (2 * Math.PI);
-    // if (degree < 0) degree += 360;
     return degree;
   }
 
   /**
-   * Returns the distance between two coordinates
-   * 
-   * @param  {number} x1
-   * @param  {number} y1
-   * @param  {number} x2
-   * @param  {number} y2
-   * @return {number}
+   * Calculate the Euclidean distance between two points.
+   *
+   * @param  {number} x1 First point X.
+   * @param  {number} y1 First point Y.
+   * @param  {number} x2 Second point X.
+   * @param  {number} y2 Second point Y.
+   * @return {number}    Distance in pixels.
    */
   public static getDistance(x1: number, y1: number, x2: number, y2: number): number {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
 
   /**
-   * Returns a bounding box that covers the container considering the "object-fit" css property
-   * 
-   * @param  {HTMLElement}                       container
-   * @param  {HTMLImageElement|HTMLVideoElement} media
-   * @return {IRect}
+   * Return a bounding box that covers the media element within its container,
+   * accounting for the CSS `object-fit` property.
+   *
+   * @param  {HTMLElement}                      container Parent container element.
+   * @param  {HTMLImageElement|HTMLVideoElement} media     Media element inside the container.
+   * @return {IRect}                                      Bounding rect relative to the container.
    */
   public static getOverlayRect(container: HTMLElement, media: HTMLImageElement|HTMLVideoElement): IRect {
     const { width: rawWidth, height: rawHeight } = this.getMediaDimensions(media);
@@ -235,18 +235,17 @@ export default class {
   }
 
   /**
-   * Returns the display dimensions and position of the media element
-   * 
-   * @param  {HTMLImageElement|HTMLVideoElement} media
-   * @return {IRect} rect Display size and position of media element
-   *          x                 : The horizontal position of the left-top point where the sourceFrame should be cut,
-   *          y                 : The vertical position of the left-top point where the sourceFrame should be cut,
-   *          width             : How much horizontal space of the sourceFrame should be cut,
-   *          height            : How much vertical space of the sourceFrame should be cut,
-   *          destinationX      : The percentage of the horizontal position of the left-top point on the printFrame where the image will be printed, relative to the printFrame width,
-   *          destinationY      : The percentage of the vertical position of the left-top point on the printFrame where the image will be printed, relative to the printFrame height,
-   *          destinationWidth  : The percentage of the printFrame width on which the image will be printed, relative to the printFrame width,
-   *          destinationHeight : The percentage of the printFrame height on which the image will be printed, relative to the printFrame height.
+   * Return the rendered (visible) rect of a media element, accounting for
+   * `object-fit` and `object-position` CSS properties.
+   *
+   * The returned rect describes both the source crop area and destination
+   * position/size as ratios of the visible element dimensions.
+   *
+   * @param  {HTMLImageElement|HTMLVideoElement} media Target media element.
+   * @return {IRect} Rendered rect with optional destination fields:
+   *   - `x`, `y`, `width`, `height`               — source crop area.
+   *   - `destinationX`, `destinationY`             — position ratio on the visible area.
+   *   - `destinationWidth`, `destinationHeight`    — size ratio on the visible area.
    */
   public static getRenderedRect(media: HTMLImageElement|HTMLVideoElement): IRect {
     const fit = getComputedStyle(media).getPropertyValue('object-fit');
@@ -311,14 +310,14 @@ export default class {
   }
 
   /**
-   * Draw points
-   * 
-   * @param  {HTMLCanvasElement} canvas
-   * @param  {number} x
-   * @param  {number} y
-   * @param  {number} options.radius
-   * @param  {string} options.color
-   * @return {void}
+   * Draw a filled circle (point) on a canvas.
+   *
+   * @param {HTMLCanvasElement} canvas          Target canvas.
+   * @param {number}           x               Center X.
+   * @param {number}           y               Center Y.
+   * @param {object}           [options]        Drawing options.
+   * @param {number}           [options.radius] Circle radius (default: 3).
+   * @param {string}           [options.color]  Fill color (default: accessibleBlue).
    */
   public static drawPoint(canvas: HTMLCanvasElement, x: number, y: number, { radius = 3, color = Color.accessibleBlue }: { radius?: number, color?: string } = {}): void {
     const ctx = canvas.getContext('2d')!;
@@ -329,13 +328,13 @@ export default class {
   }
 
   /**
-   * Draw center point
-   * 
-   * @param  {HTMLCanvasElement} canvas
-   * @param  {ICoordinate[]} coordinates
-   * @param  {number} options.radius
-   * @param  {string} options.color
-   * @return {void}
+   * Draw a point at the centroid of the given coordinates.
+   *
+   * @param {HTMLCanvasElement} canvas          Target canvas.
+   * @param {ICoordinate[]}    coordinates     Array of coordinate objects.
+   * @param {object}           [options]        Drawing options.
+   * @param {number}           [options.radius] Circle radius (default: 3).
+   * @param {string}           [options.color]  Fill color (default: accessibleBlue).
    */
   public static drawCenterPoint(canvas: HTMLCanvasElement, coordinates: ICoordinate[], { radius = 3, color = Color.accessibleBlue }: { radius?: number, color?: string } = {}): void {
     const { x, y } = this.getCenterCoordinate(...coordinates);
@@ -343,19 +342,20 @@ export default class {
   }
 
   /**
-   * Draw rectangle
-   * 
-   * @param  {HTMLCanvasElement} canvas
-   * @param  {number} x
-   * @param  {number} y
-   * @param  {number} width
-   * @param  {number} height
-   * @param  {number} options.degree
-   * @param  {number} options.lineWidth
-   * @param  {string} options.lineColor
-   * @param  {number} options.shadowBlur
-   * @param  {string} options.shadowColor
-   * @return {void}
+   * Draw a rectangle on a canvas, optionally rotated and/or filled.
+   *
+   * @param {HTMLCanvasElement} canvas               Target canvas.
+   * @param {number}           x                    Top-left X.
+   * @param {number}           y                    Top-left Y.
+   * @param {number}           width                Rectangle width.
+   * @param {number}           height               Rectangle height.
+   * @param {object}           [options]             Drawing options.
+   * @param {number}           [options.degree]      Rotation angle in degrees (default: 0).
+   * @param {number}           [options.lineWidth]   Stroke width (default: 2).
+   * @param {string}           [options.lineColor]   Stroke color (default: accessibleBlue).
+   * @param {number}           [options.shadowBlur]  Shadow blur radius (default: 0).
+   * @param {string}           [options.shadowColor] Shadow color (default: accessibleBlue).
+   * @param {string}           [options.fill]        Fill color (default: none).
    */
   public static drawRectangle(
     canvas: HTMLCanvasElement,
@@ -403,18 +403,18 @@ export default class {
   }
 
   /**
-   * Draw rectangle corners
-   * 
-   * @param  {HTMLCanvasElement} canvas
-   * @param  {number} x
-   * @param  {number} y
-   * @param  {number} width
-   * @param  {number} height
-   * @param  {number} options.lineWidth
-   * @param  {string} options.lineColor
-   * @param  {number} options.shadowBlur
-   * @param  {string} options.shadowColor
-   * @return {void}
+   * Draw only the corner marks of a rectangle (L-shaped brackets at each corner).
+   *
+   * @param {HTMLCanvasElement} canvas               Target canvas.
+   * @param {number}           x                    Top-left X.
+   * @param {number}           y                    Top-left Y.
+   * @param {number}           width                Rectangle width.
+   * @param {number}           height               Rectangle height.
+   * @param {object}           [options]             Drawing options.
+   * @param {number}           [options.lineWidth]   Stroke width (default: 2).
+   * @param {string}           [options.lineColor]   Stroke color (default: accessibleBlue).
+   * @param {number}           [options.shadowBlur]  Shadow blur radius (default: 0).
+   * @param {string}           [options.shadowColor] Shadow color (default: accessibleBlue).
    */
   public static drawRectangleCorners(
     canvas: HTMLCanvasElement,
@@ -445,6 +445,7 @@ export default class {
       ctx.shadowBlur = shadowBlur;
       ctx.shadowColor = shadowColor;
     }
+    // Corner bracket length = 1/4 of the shorter side
     const corner = Math.min(width, height) / 4;
     ctx.beginPath();
     ctx.moveTo(x, y + corner);
@@ -463,9 +464,9 @@ export default class {
   }
 
   /**
-   * Clear canvas
-   * 
-   * @return {void}
+   * Clear the entire canvas.
+   *
+   * @param {HTMLCanvasElement} canvas Target canvas to clear.
    */
   public static clearCanvas(canvas: HTMLCanvasElement): void {
     const ctx = canvas.getContext('2d')!;
@@ -473,17 +474,15 @@ export default class {
   }
 
   /**
-   * Flip horizontally
-   * 
-   * @param {HTMLCanvasElement} canvas
-   * @return {void}
+   * Flip the canvas content horizontally (mirror).
+   *
+   * @param {HTMLCanvasElement} canvas Target canvas to flip.
    */
   public static flipHorizontal(canvas: HTMLCanvasElement): void {
     const ctx = canvas.getContext('2d')!;
     const data = ctx.getImageData(0,0, canvas.width, canvas.height);
-    // Traverse every row and flip the pixels
+    // Traverse every row and swap pixels from left and right halves
     for (let i=0; i<data.height; i++) {
-     // We only need to do half of every row since we're flipping the halves
       for (let j=0; j<data.width/2; j++) {
         const index = (i * 4) * data.width + (j * 4);
         const mirrorIndex = ((i + 1) * 4) * data.width - ((j + 1) * 4);

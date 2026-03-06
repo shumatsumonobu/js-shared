@@ -1,21 +1,22 @@
 export default class {
     /**
-     *  Set cookie
+     * Set a cookie value.
      *
-     * @param {string} key
-     * @param {string} value
+     * @param {string} key   Cookie name.
+     * @param {string} value Cookie value.
      */
     static set(key: string, value: string): void;
     /**
-     *  Get cookie
+     * Get a cookie value by name.
      *
-     * @param {string} key
+     * @param  {string}           key Cookie name.
+     * @return {string|undefined}     The cookie value, or `undefined` if not found.
      */
     static get(key: string): string | undefined;
     /**
-     *  Remove cookie
+     * Remove a cookie by name.
      *
-     * @param {string} key
+     * @param {string} key Cookie name.
      */
     static remove(key: string): void;
 }

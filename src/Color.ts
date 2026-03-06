@@ -1,10 +1,13 @@
 /**
- * System color.
+ * System color palette.
  *
- * The following color values ​​are various colors that adapt to changing accessibility settings.
+ * Provides color values that adapt to accessibility settings.
+ * Includes light, dark, accessible-light and accessible-dark variants
+ * based on the Apple Human Interface Guidelines color system.
  */
 export default {
-  
+
+  // --- Light mode ---
   blue: 'rgb(0,122,255)',
   brown: 'rgb(162,132,94)',
   gray: 'rgb(142,142,147)',
@@ -22,6 +25,7 @@ export default {
   teal: 'rgb(90,200,250)',
   yellow: 'rgb(255,204,0)',
 
+  // --- Dark mode ---
   darkBlue: 'rgb(10,132,255)',
   darkBrown: 'rgb(172,142,104)',
   darkGray: 'rgb(142,142,147)',
@@ -39,6 +43,7 @@ export default {
   darkTeal: 'rgb(100,210,255)',
   darkYellow: 'rgb(255,214,10)',
 
+  // --- Accessible light mode (higher contrast) ---
   accessibleBlue: 'rgb(0,64,221)',
   accessibleBrown: 'rgb(127,101,69)',
   accessibleGray: 'rgb(108,108,112)',
@@ -56,6 +61,7 @@ export default {
   accessibleTeal: 'rgb(0,113,164)',
   accessibleYellow: 'rgb(160,90,0)',
 
+  // --- Accessible dark mode (higher contrast) ---
   accessibleDarkBlue: 'rgb(64,156,255)',
   accessibleDarkBrown: 'rgb(181,148,105)',
   accessibleDarkGray: 'rgb(174,174,178)',

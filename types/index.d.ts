@@ -1,4 +1,3 @@
-import { version } from '~/package';
 import Misc from '~/Misc';
 import Graphics from '~/Graphics';
 import Types from '~/Types';
@@ -13,4 +12,4 @@ import ICoordinate from '~/interfaces/ICoordinate';
 import IRect from '~/interfaces/IRect';
 import Cookie from '~/Cookie';
 import Clipboard from '~/Clipboard';
-export { version, Misc, Graphics, Types, Browser, Date, Random, Collection, Template, Color, IDimensions, ICoordinate, IRect, Cookie, Clipboard };
+export { Misc, Graphics, Types, Browser, Date, Random, Collection, Template, Color, IDimensions, ICoordinate, IRect, Cookie, Clipboard };

@@ -1,23 +1,24 @@
 /**
  * Miscellaneous utility.
+ * Runtime environment detection and global object access.
  */
 export default class {
-  
+
   private static fallbackGlobalObject: {} = {};
 
   /**
-   * Returns false if the operating environment is a browser and true if it is Node.js
-   * 
-   * @return {boolean}
+   * Detect whether the current runtime is Node.js.
+   *
+   * @return {boolean} `true` in Node.js, `false` in a browser.
    */
   public static isNodeEnvironment(): boolean {
     return Object.prototype.toString.call(typeof process !== 'undefined' ? process : 0) === '[object process]';
   }
 
   /**
-   * Returns a window object for browsers and a global object for Node.js
+   * Return the global object for the current runtime.
    *
-   * @return {any}
+   * @return {T} `window` in browsers, `global` in Node.js, or `self` in Web Workers.
    */
   public static getGlobal<T>(): T {
     return (this.isNodeEnvironment()

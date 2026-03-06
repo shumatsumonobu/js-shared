@@ -1,3 +1,10 @@
+/**
+ * System color palette.
+ *
+ * Provides color values that adapt to accessibility settings.
+ * Includes light, dark, accessible-light and accessible-dark variants
+ * based on the Apple Human Interface Guidelines color system.
+ */
 declare const _default: {
     blue: string;
     brown: string;
@@ -64,9 +71,4 @@ declare const _default: {
     accessibleDarkTeal: string;
     accessibleDarkYellow: string;
 };
-/**
- * System color.
- *
- * The following color values ​​are various colors that adapt to changing accessibility settings.
- */
 export default _default;
